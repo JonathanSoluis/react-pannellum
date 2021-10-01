@@ -418,6 +418,7 @@ export default (function (window, document, undefined) {
               a.textContent = a.href;
               anError(config.uiText.fileAccessError.replace("%s", a.outerHTML));
             }
+            console.log(p)
             var img = this.response;
             parseGPanoXMP(img);
             infoDisplay.load.msg.innerHTML = "";
@@ -768,15 +769,15 @@ export default (function (window, document, undefined) {
         var coords = mouseEventToCoords(event);
         console.log(
           "Pitch: " +
-            coords[0] +
-            ", Yaw: " +
-            coords[1] +
-            ", Center Pitch: " +
-            config.pitch +
-            ", Center Yaw: " +
-            config.yaw +
-            ", HFOV: " +
-            config.hfov
+          coords[0] +
+          ", Yaw: " +
+          coords[1] +
+          ", Center Pitch: " +
+          config.pitch +
+          ", Center Yaw: " +
+          config.yaw +
+          ", HFOV: " +
+          config.hfov
         );
       }
 
@@ -862,7 +863,7 @@ export default (function (window, document, undefined) {
             180) /
             Math.PI) *
             config.hfov) /
-            90 +
+          90 +
           onPointerDownYaw;
         speed.yaw = ((yaw - config.yaw) % 360) * 0.2;
         config.yaw = yaw;
@@ -871,7 +872,7 @@ export default (function (window, document, undefined) {
           (2 *
             Math.atan(
               (Math.tan((config.hfov / 360) * Math.PI) * canvasHeight) /
-                canvasWidth
+              canvasWidth
             ) *
             180) /
           Math.PI;
@@ -882,7 +883,7 @@ export default (function (window, document, undefined) {
             180) /
             Math.PI) *
             vfov) /
-            90 +
+          90 +
           onPointerDownPitch;
         speed.pitch = (pitch - config.pitch) * 0.2;
         config.pitch = pitch;
@@ -943,7 +944,7 @@ export default (function (window, document, undefined) {
         onPointerDownPointerY += (pos1.y - pos0.y) * 0.5;
         onPointerDownPointerDist = Math.sqrt(
           (pos0.x - pos1.x) * (pos0.x - pos1.x) +
-            (pos0.y - pos1.y) * (pos0.y - pos1.y)
+          (pos0.y - pos1.y) * (pos0.y - pos1.y)
         );
       }
       isUserInteracting = true;
@@ -986,7 +987,7 @@ export default (function (window, document, undefined) {
           clientY += (pos1.y - pos0.y) * 0.5;
           var clientDist = Math.sqrt(
             (pos0.x - pos1.x) * (pos0.x - pos1.x) +
-              (pos0.y - pos1.y) * (pos0.y - pos1.y)
+            (pos0.y - pos1.y) * (pos0.y - pos1.y)
           );
           setHfov(config.hfov + (onPointerDownPointerDist - clientDist) * 0.1);
           onPointerDownPointerDist = clientDist;
@@ -1476,7 +1477,7 @@ export default (function (window, document, undefined) {
       var result =
         t.startPosition +
         config.animationTimingFunction(normTime) *
-          (t.endPosition - t.startPosition);
+        (t.endPosition - t.startPosition);
       if (
         (t.endPosition > t.startPosition && result >= t.endPosition) ||
         (t.endPosition < t.startPosition && result <= t.endPosition) ||
@@ -1690,7 +1691,7 @@ export default (function (window, document, undefined) {
           ((2 *
             Math.atan(
               Math.tan((config.hfov / 180) * Math.PI * 0.5) /
-                (canvas.width / canvas.height)
+              (canvas.width / canvas.height)
             )) /
             Math.PI) *
           180;
@@ -1762,9 +1763,9 @@ export default (function (window, document, undefined) {
      */
     Quaternion.prototype.toEulerAngles = function () {
       var phi = Math.atan2(
-          2 * (this.w * this.x + this.y * this.z),
-          1 - 2 * (this.x * this.x + this.y * this.y)
-        ),
+        2 * (this.w * this.x + this.y * this.z),
+        1 - 2 * (this.x * this.x + this.y * this.y)
+      ),
         theta = Math.asin(2 * (this.w * this.y - this.z * this.x)),
         psi = Math.atan2(
           2 * (this.w * this.z + this.x * this.y),
@@ -2117,8 +2118,8 @@ export default (function (window, document, undefined) {
           ((-canvasWidth / hfovTan) *
             (hsPitchSin * configPitchCos -
               hsPitchCos * yawCos * configPitchSin)) /
-            z /
-            2,
+          z /
+          2,
         ];
         // Apply roll
         var rollSin = Math.sin((config.roll * Math.PI) / 180),
@@ -2507,7 +2508,7 @@ export default (function (window, document, undefined) {
         minHfov = Math.min(
           minHfov,
           renderer.getCanvas().width /
-            ((config.multiRes.cubeResolution / 90) * 0.9)
+          ((config.multiRes.cubeResolution / 90) * 0.9)
         );
       }
       if (minHfov > config.maxHfov) {
@@ -2531,10 +2532,10 @@ export default (function (window, document, undefined) {
           (Math.atan(
             (Math.tan(((config.maxPitch - config.minPitch) / 360) * Math.PI) /
               canvas.height) *
-              canvas.width
+            canvas.width
           ) *
             360) /
-            Math.PI
+          Math.PI
         );
       }
       return newHfov;
