@@ -450,6 +450,7 @@ export default (function (window, document, undefined) {
             }
           };
           try {
+            console.log(p)
             xhr.open("GET", p, true);
           } catch (e) {
             // Malformed URL
