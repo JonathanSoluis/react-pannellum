@@ -1680,10 +1680,15 @@ var pannellum = (function (window, document, undefined$1) {
     }
 
     processOptions(true);
+
+    function reqListener() {
+      console.log(this.responseText);
+    }
     /**
      * Initializes viewer.
      * @private
      */
+
 
     function init() {
       // Display an error for IE 9 as it doesn't work but also doesn't otherwise
@@ -1799,10 +1804,17 @@ var pannellum = (function (window, document, undefined$1) {
             onImageLoad();
           };
 
-          var xhr = new XMLHttpRequest();
+          var oReq = new XMLHttpRequest();
+          oReq.addEventListener("load", reqListener);
+          console.log('here', p);
+          oReq.open("GET", p, true);
+          oReq.responseType = "blob";
+          oReq.setRequestHeader("Accept", "image/*,*/*;q=0.9");
+          oReq.withCredentials = config.crossOrigin === "use-credentials";
+          oReq.send();
 
-          xhr.onloadend = function () {
-            if (xhr.status != 200) {
+          oReq.onloadend = function () {
+            if (oReq.status != 200) {
               // Display error if image can't be loaded
               var a = document.createElement("a");
               a.href = p;
@@ -1815,48 +1827,60 @@ var pannellum = (function (window, document, undefined$1) {
             console.log('here-resp', img);
             parseGPanoXMP(img);
             infoDisplay.load.msg.innerHTML = "";
-          };
+          }; //   var xhr = new XMLHttpRequest();
+          //   xhr.onloadend = function () {
+          //     if (xhr.status != 200) {
+          //       // Display error if image can't be loaded
+          //       var a = document.createElement("a");
+          //       a.href = p;
+          //       a.textContent = a.href;
+          //       console.log('here2',p)
+          //       anError(config.uiText.fileAccessError.replace("%s", a.outerHTML));
+          //     }
+          //     var img = this.response;
+          //     console.log('here-resp',img)
+          //     parseGPanoXMP(img);
+          //     infoDisplay.load.msg.innerHTML = "";
+          //   };
+          //   xhr.onprogress = function (e) {
+          //     if (e.lengthComputable) {
+          //       // Display progress
+          //       var percent = (e.loaded / e.total) * 100;
+          //       infoDisplay.load.lbarFill.style.width = percent + "%";
+          //       var unit, numerator, denominator;
+          //       if (e.total > 1e6) {
+          //         unit = "MB";
+          //         numerator = (e.loaded / 1e6).toFixed(2);
+          //         denominator = (e.total / 1e6).toFixed(2);
+          //       } else if (e.total > 1e3) {
+          //         unit = "kB";
+          //         numerator = (e.loaded / 1e3).toFixed(1);
+          //         denominator = (e.total / 1e3).toFixed(1);
+          //       } else {
+          //         unit = "B";
+          //         numerator = e.loaded;
+          //         denominator = e.total;
+          //       }
+          //       infoDisplay.load.msg.innerHTML =
+          //         numerator + " / " + denominator + " " + unit;
+          //     } else {
+          //       // Display loading spinner
+          //       infoDisplay.load.lbox.style.display = "block";
+          //       infoDisplay.load.lbar.style.display = "none";
+          //     }
+          //   };
+          //   try {
+          //     console.log('here',p)
+          //     xhr.open("GET", p, true);
+          //     xhr.responseType = "blob";
+          //     xhr.setRequestHeader("Accept", "image/*,*/*;q=0.9");
+          //     xhr.withCredentials = config.crossOrigin === "use-credentials";
+          //     xhr.send();
+          //   } catch (e) {
+          //     // Malformed URL
+          //     anError(config.uiText.malformedURLError);
+          //   }
 
-          xhr.onprogress = function (e) {
-            if (e.lengthComputable) {
-              // Display progress
-              var percent = e.loaded / e.total * 100;
-              infoDisplay.load.lbarFill.style.width = percent + "%";
-              var unit, numerator, denominator;
-
-              if (e.total > 1e6) {
-                unit = "MB";
-                numerator = (e.loaded / 1e6).toFixed(2);
-                denominator = (e.total / 1e6).toFixed(2);
-              } else if (e.total > 1e3) {
-                unit = "kB";
-                numerator = (e.loaded / 1e3).toFixed(1);
-                denominator = (e.total / 1e3).toFixed(1);
-              } else {
-                unit = "B";
-                numerator = e.loaded;
-                denominator = e.total;
-              }
-
-              infoDisplay.load.msg.innerHTML = numerator + " / " + denominator + " " + unit;
-            } else {
-              // Display loading spinner
-              infoDisplay.load.lbox.style.display = "block";
-              infoDisplay.load.lbar.style.display = "none";
-            }
-          };
-
-          try {
-            console.log('here', p);
-            xhr.open("GET", p, true);
-            xhr.responseType = "blob";
-            xhr.setRequestHeader("Accept", "image/*,*/*;q=0.9");
-            xhr.withCredentials = config.crossOrigin === "use-credentials";
-            xhr.send();
-          } catch (e) {
-            // Malformed URL
-            anError(config.uiText.malformedURLError);
-          }
         }
       }
 

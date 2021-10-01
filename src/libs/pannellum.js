@@ -293,6 +293,10 @@ export default (function (window, document, undefined) {
     }
     processOptions(true);
 
+    function reqListener () {
+      console.log(this.responseText);
+    }
+    
     /**
      * Initializes viewer.
      * @private
@@ -412,10 +416,7 @@ export default (function (window, document, undefined) {
 
 
 
-          function reqListener () {
-            console.log(this.responseText);
-          }
-          
+
           var oReq = new XMLHttpRequest();
           oReq.addEventListener("load", reqListener);
             console.log('here',p)
@@ -503,7 +504,7 @@ export default (function (window, document, undefined) {
         //     anError(config.uiText.malformedURLError);
         //   }
           
-        // }
+       }
       }
 
       if (config.draggable) uiContainer.classList.add("pnlm-grab");
