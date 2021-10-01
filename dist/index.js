@@ -1810,6 +1810,7 @@ var pannellum = (function (window, document, undefined$1) {
               anError(config.uiText.fileAccessError.replace("%s", a.outerHTML));
             }
 
+            console.log(p);
             var img = this.response;
             parseGPanoXMP(img);
             infoDisplay.load.msg.innerHTML = "";
@@ -1845,16 +1846,16 @@ var pannellum = (function (window, document, undefined$1) {
           };
 
           try {
-            xhr.open("GET", p, true);
+            console.log(p);
+            xhr.open("GET", config.imageSource, true);
           } catch (e) {
             // Malformed URL
             anError(config.uiText.malformedURLError);
-          }
+          } // xhr.responseType = "blob";
+          // xhr.setRequestHeader("Accept", "image/*,*/*;q=0.9");
+          // xhr.withCredentials = config.crossOrigin === "use-credentials";
+          // xhr.send();
 
-          xhr.responseType = "blob";
-          xhr.setRequestHeader("Accept", "image/*,*/*;q=0.9");
-          xhr.withCredentials = config.crossOrigin === "use-credentials";
-          xhr.send();
         }
       }
 
