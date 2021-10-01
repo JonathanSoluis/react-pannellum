@@ -402,7 +402,7 @@ export default (function (window, document, undefined) {
           //   ? config.imageSource
           //   : p + config.imageSource;
 
-          p = config.imageSource;
+          p = config.basePath + config.imageSource;
 
           panoImage.onload = function () {
             window.URL.revokeObjectURL(this.src); // Clean up
