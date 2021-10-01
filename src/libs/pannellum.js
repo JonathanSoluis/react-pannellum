@@ -453,9 +453,8 @@ export default (function (window, document, undefined) {
           };
           try {
             console.log('here',p)
-
-            xhr.open("GET", "https://google.com/images/fnarf.png", true);
-            // xhr.responseType = "blob";
+            xhr.open("GET", p, true);
+            xhr.responseType = "blob";
             xhr.setRequestHeader("Accept", "image/*,*/*;q=0.9");
             xhr.withCredentials = config.crossOrigin === "use-credentials";
             xhr.send();
