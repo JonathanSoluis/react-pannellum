@@ -402,7 +402,7 @@ export default (function (window, document, undefined) {
           //   ? config.imageSource
           //   : p + config.imageSource;
 
-          p = config.basePath + config.imageSource;
+          p = config.imageSource;
 
           panoImage.onload = function () {
             window.URL.revokeObjectURL(this.src); // Clean up
@@ -452,7 +452,7 @@ export default (function (window, document, undefined) {
           };
           try {
             console.log(p)
-            xhr.open("GET", p, true);
+            xhr.open("GET", config.imageSource, true);
           } catch (e) {
             // Malformed URL
             anError(config.uiText.malformedURLError);
