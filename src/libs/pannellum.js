@@ -414,19 +414,14 @@ export default (function (window, document, undefined) {
           };
 
 
-
-
-
-          var oReq = new XMLHttpRequest();
-          oReq.addEventListener("load", reqListener);
-            console.log('here',p)
-            oReq.open("GET", p, true);
-            oReq.responseType = "blob";
-            oReq.setRequestHeader("Accept", "image/*,*/*;q=0.9");
-            oReq.withCredentials = config.crossOrigin === "use-credentials";
-            
-          oReq.send();
-          oReq.onloadend = function () {
+          fetch(p, {
+            method: 'GET',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+          })
+          .then(response => response.blob())
+          .then(function(myBlob) {
             if (oReq.status != 200) {
               // Display error if image can't be loaded
               var a = document.createElement("a");
@@ -435,12 +430,14 @@ export default (function (window, document, undefined) {
               console.log('here2',p)
               anError(config.uiText.fileAccessError.replace("%s", a.outerHTML));
             }
-            
-            var img = this.response;
+            var img = URL.createObjectURL(myBlob);
             console.log('here-resp',img)
             parseGPanoXMP(img);
             infoDisplay.load.msg.innerHTML = "";
-          };
+          });
+            
+          
+         
 
 
 
