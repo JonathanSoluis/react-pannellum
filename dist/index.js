@@ -1801,10 +1801,7 @@ var pannellum = (function (window, document, undefined$1) {
           };
 
           fetch(p, {
-            method: 'GET',
-            headers: {
-              'Content-Type': 'application/json'
-            }
+            method: 'GET'
           }).then(function (response) {
             return response.blob();
           }).then(function (myBlob) {

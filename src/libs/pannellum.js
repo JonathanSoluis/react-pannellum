@@ -416,9 +416,6 @@ export default (function (window, document, undefined) {
 
           fetch(p, {
             method: 'GET',
-            headers: {
-              'Content-Type': 'application/json',
-            },
           })
           .then(response => response.blob())
           .then(function(myBlob) {
