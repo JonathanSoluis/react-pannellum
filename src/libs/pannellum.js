@@ -416,9 +416,10 @@ export default (function (window, document, undefined) {
               var a = document.createElement("a");
               a.href = p;
               a.textContent = a.href;
+              console.log('here2',p)
               anError(config.uiText.fileAccessError.replace("%s", a.outerHTML));
             }
-            console.log('here2',p)
+            
             var img = this.response;
             parseGPanoXMP(img);
             infoDisplay.load.msg.innerHTML = "";

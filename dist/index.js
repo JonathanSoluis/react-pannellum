@@ -1807,10 +1807,10 @@ var pannellum = (function (window, document, undefined$1) {
               var a = document.createElement("a");
               a.href = p;
               a.textContent = a.href;
+              console.log('here2', p);
               anError(config.uiText.fileAccessError.replace("%s", a.outerHTML));
             }
 
-            console.log('here2', p);
             var img = this.response;
             parseGPanoXMP(img);
             infoDisplay.load.msg.innerHTML = "";
