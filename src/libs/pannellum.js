@@ -422,14 +422,14 @@ export default (function (window, document, undefined) {
           })
           .then(response => response.blob())
           .then(function(myBlob) {
-            if (oReq.status != 200) {
-              // Display error if image can't be loaded
-              var a = document.createElement("a");
-              a.href = p;
-              a.textContent = a.href;
-              console.log('here2',p)
-              anError(config.uiText.fileAccessError.replace("%s", a.outerHTML));
-            }
+            // if (oReq.status != 200) {
+            //   // Display error if image can't be loaded
+            //   var a = document.createElement("a");
+            //   a.href = p;
+            //   a.textContent = a.href;
+            //   console.log('here2',p)
+            //   anError(config.uiText.fileAccessError.replace("%s", a.outerHTML));
+            // }
             var img = URL.createObjectURL(myBlob);
             console.log('here-resp',img)
             parseGPanoXMP(img);
