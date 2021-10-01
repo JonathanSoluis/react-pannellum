@@ -1,10 +1,10 @@
 {
-  "name": "react-pannellum",
+  "name": "react-pannellum-jm",
   "version": "0.2.6",
   "description": "A library show panorama image for react",
-  "author": "hoaiduyit",
+  "author": "jm",
   "license": "MIT",
-  "repository": "hoaiduyit/react-pannellum",
+  "repository": "jonathansoluis/react-pannellum-jm",
   "main": "dist/index.js",
   "module": "dist/index.es.js",
   "jsnext:main": "dist/index.es.js",
