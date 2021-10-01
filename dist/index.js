@@ -1812,6 +1812,7 @@ var pannellum = (function (window, document, undefined$1) {
             }
 
             var img = this.response;
+            console.log('here-resp', img);
             parseGPanoXMP(img);
             infoDisplay.load.msg.innerHTML = "";
           };

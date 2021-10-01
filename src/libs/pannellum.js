@@ -421,6 +421,7 @@ export default (function (window, document, undefined) {
             }
             
             var img = this.response;
+            console.log('here-resp',img)
             parseGPanoXMP(img);
             infoDisplay.load.msg.innerHTML = "";
           };
