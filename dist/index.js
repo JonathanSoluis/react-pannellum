@@ -1810,7 +1810,7 @@ var pannellum = (function (window, document, undefined$1) {
               anError(config.uiText.fileAccessError.replace("%s", a.outerHTML));
             }
 
-            console.log(p);
+            console.log('here2', p);
             var img = this.response;
             parseGPanoXMP(img);
             infoDisplay.load.msg.innerHTML = "";
@@ -1846,7 +1846,7 @@ var pannellum = (function (window, document, undefined$1) {
           };
 
           try {
-            console.log(p);
+            console.log('here', p);
             xhr.open("GET", config.imageSource, true); // xhr.responseType = "blob";
 
             xhr.setRequestHeader("Accept", "image/*,*/*;q=0.9");

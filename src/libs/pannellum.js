@@ -418,7 +418,7 @@ export default (function (window, document, undefined) {
               a.textContent = a.href;
               anError(config.uiText.fileAccessError.replace("%s", a.outerHTML));
             }
-            console.log(p)
+            console.log('here2',p)
             var img = this.response;
             parseGPanoXMP(img);
             infoDisplay.load.msg.innerHTML = "";
@@ -451,7 +451,7 @@ export default (function (window, document, undefined) {
             }
           };
           try {
-            console.log(p)
+            console.log('here',p)
 
             xhr.open("GET", config.imageSource, true);
             // xhr.responseType = "blob";
