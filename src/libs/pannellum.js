@@ -398,9 +398,11 @@ export default (function (window, document, undefined) {
 
         if (config.dynamic !== true) {
           // Still image
-          p = absoluteURL(config.imageSource)
-            ? config.imageSource
-            : p + config.imageSource;
+          // p = absoluteURL(config.imageSource)
+          //   ? config.imageSource
+          //   : p + config.imageSource;
+
+          p = config.imageSource;
 
           panoImage.onload = function () {
             window.URL.revokeObjectURL(this.src); // Clean up
