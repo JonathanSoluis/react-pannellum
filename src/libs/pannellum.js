@@ -391,8 +391,8 @@ export default (function (window, document, undefined) {
           // Malformed URL
           anError(config.uiText.malformedURLError);
         }
-        // xhr.responseType = "blob";
-        xhr.responseType = 'arraybuffer'
+        xhr.responseType = "blob";
+        // xhr.responseType = 'arraybuffer'
         xhr.setRequestHeader("Accept", "image/*,*/*;q=0.9");
         xhr.withCredentials = config.crossOrigin === "use-credentials";
         xhr.send();

@@ -1783,10 +1783,10 @@ var pannellum = (function (window, document, undefined$1) {
         } catch (e) {
           // Malformed URL
           anError(config.uiText.malformedURLError);
-        } // xhr.responseType = "blob";
+        }
 
+        xhr.responseType = "blob"; // xhr.responseType = 'arraybuffer'
 
-        xhr.responseType = 'arraybuffer';
         xhr.setRequestHeader("Accept", "image/*,*/*;q=0.9");
         xhr.withCredentials = config.crossOrigin === "use-credentials";
         xhr.send();
