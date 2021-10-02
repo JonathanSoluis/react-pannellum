@@ -613,6 +613,7 @@ export default (function (window, document, undefined) {
         // Load panorama
         console.log('load panorama image', image)
         panoImage.src = server_url;
+        panoImage.crossOrigin = "anonymous"
         console.log('panoImage.src', panoImage.src);
       });
       reader.addEventListener("error", function () {
