@@ -1815,6 +1815,8 @@ export default (function (window, document, undefined) {
           params.horizonRoll = (config.horizonRoll * Math.PI) / 180;
         if (config.backgroundColor !== undefined)
           params.backgroundColor = config.backgroundColor;
+        
+        console.log('renderer.init')
         renderer.init(
           panoImage,
           config.type,
@@ -1855,6 +1857,7 @@ export default (function (window, document, undefined) {
      * @private
      */
     function renderInitCallback() {
+      console.log('renderInitCallback')
       // Fade if specified
       if (config.sceneFadeDuration && renderer.fadeImg !== undefined) {
         renderer.fadeImg.style.opacity = 0;

@@ -3048,6 +3048,7 @@ var pannellum = (function (window, document, undefined$1) {
         if (config.horizonPitch !== undefined$1) params.horizonPitch = config.horizonPitch * Math.PI / 180;
         if (config.horizonRoll !== undefined$1) params.horizonRoll = config.horizonRoll * Math.PI / 180;
         if (config.backgroundColor !== undefined$1) params.backgroundColor = config.backgroundColor;
+        console.log('renderer.init');
         renderer.init(panoImage, config.type, config.dynamic, config.haov * Math.PI / 180, config.vaov * Math.PI / 180, config.vOffset * Math.PI / 180, renderInitCallback, params);
 
         if (config.dynamic !== true) {
@@ -3077,7 +3078,8 @@ var pannellum = (function (window, document, undefined$1) {
 
 
     function renderInitCallback() {
-      // Fade if specified
+      console.log('renderInitCallback'); // Fade if specified
+
       if (config.sceneFadeDuration && renderer.fadeImg !== undefined$1) {
         renderer.fadeImg.style.opacity = 0; // Remove image
 
