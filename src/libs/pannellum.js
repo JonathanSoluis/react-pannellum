@@ -1831,7 +1831,7 @@ export default (function (window, document, undefined) {
         }
       } catch (event) {
         // Panorama not loaded
-
+        console.log('bust', event)
         // Display error if there is a bad texture
         if (event.type === "webgl error" || event.type === "no webgl") {
           anError();

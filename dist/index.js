@@ -3056,7 +3056,8 @@ var pannellum = (function (window, document, undefined$1) {
         }
       } catch (event) {
         // Panorama not loaded
-        // Display error if there is a bad texture
+        console.log('bust', event); // Display error if there is a bad texture
+
         if (event.type === "webgl error" || event.type === "no webgl") {
           anError();
         } else if (event.type === "webgl size error") {
