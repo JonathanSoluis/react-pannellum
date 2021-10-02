@@ -339,6 +339,7 @@ export default (function (window, document, undefined) {
 
         panoImage.onload = function () {
           // window.URL.revokeObjectURL(this.src); // Clean up
+          console.log('onImageLoad')
           onImageLoad();
         };
 
@@ -391,11 +392,14 @@ export default (function (window, document, undefined) {
           // Malformed URL
           anError(config.uiText.malformedURLError);
         }
+        console.log('start xhr')
         xhr.responseType = "blob";
         // xhr.responseType = 'arraybuffer'
         xhr.setRequestHeader("Accept", "image/*,*/*;q=0.9");
         xhr.withCredentials = config.crossOrigin === "use-credentials";
+        console.log('send xhr')
         xhr.send();
+        console.log('xhr sent')
       }
 
 
@@ -499,13 +503,13 @@ export default (function (window, document, undefined) {
         if (window.navigator.pointerEnabled)
           container.style.touchAction = "none";
       }
-
+      console.log('renderInit')
       renderInit();
       setHfov(config.hfov); // possibly adapt hfov after configuration and canvas is complete; prevents empty space on top or bottom by zomming out too much
       setTimeout(function () {
         isTimedOut = true;
       }, 500);
-      
+
     }
 
     /**

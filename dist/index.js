@@ -1727,6 +1727,7 @@ var pannellum = (function (window, document, undefined$1) {
 
         panoImage.onload = function () {
           // window.URL.revokeObjectURL(this.src); // Clean up
+          console.log('onImageLoad');
           onImageLoad();
         };
 
@@ -1784,11 +1785,14 @@ var pannellum = (function (window, document, undefined$1) {
           anError(config.uiText.malformedURLError);
         }
 
+        console.log('start xhr');
         xhr.responseType = "blob"; // xhr.responseType = 'arraybuffer'
 
         xhr.setRequestHeader("Accept", "image/*,*/*;q=0.9");
         xhr.withCredentials = config.crossOrigin === "use-credentials";
+        console.log('send xhr');
         xhr.send();
+        console.log('xhr sent');
       }
 
       if (config.draggable) uiContainer.classList.add("pnlm-grab");
@@ -1867,6 +1871,7 @@ var pannellum = (function (window, document, undefined$1) {
         if (window.navigator.pointerEnabled) container.style.touchAction = "none";
       }
 
+      console.log('renderInit');
       renderInit();
       setHfov(config.hfov); // possibly adapt hfov after configuration and canvas is complete; prevents empty space on top or bottom by zomming out too much
 
