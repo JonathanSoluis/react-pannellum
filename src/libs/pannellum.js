@@ -614,12 +614,11 @@ export default (function (window, document, undefined) {
         var reader2 = new FileReader();
           // Load panorama
           reader2.addEventListener("loadend", function () {
-            console.log('parseGPanoXMP loaded result')
-            var img = reader.result;
-    
+            console.log('reader2 loaded result')
+            
             // Load panorama
             console.log('load panorama image')
-            panoImage.src = base64_data_url;
+            panoImage.src = reader.result;
             console.log('panoImage.src', panoImage.src);
           });
           reader2.readAsDataURL(image)
