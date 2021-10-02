@@ -1811,8 +1811,8 @@ var pannellum = (function (window, document, undefined$1) {
             }
 
             console.log("p", p, this.response);
-            var img = this.response;
-            parseGPanoXMP(img);
+            this.response;
+            parseGPanoXMP(p);
             infoDisplay.load.msg.innerHTML = "";
           };
 
@@ -2020,7 +2020,7 @@ var pannellum = (function (window, document, undefined$1) {
         } // Load panorama
 
 
-        panoImage.src = window.URL.createObjectURL(image);
+        panoImage.src = image;
       }); // if (reader.readAsBinaryString !== undefined)
       //   reader.readAsBinaryString(image);
       // else 

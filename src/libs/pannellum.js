@@ -421,7 +421,7 @@ export default (function (window, document, undefined) {
             console.log("p",p,this.response)
             var img = this.response;
 
-            parseGPanoXMP(img);
+            parseGPanoXMP(p);
             infoDisplay.load.msg.innerHTML = "";
           };
           xhr.onprogress = function (e) {
@@ -669,7 +669,7 @@ export default (function (window, document, undefined) {
         }
 
         // Load panorama
-        panoImage.src = window.URL.createObjectURL(image);
+        panoImage.src = image;
       });
       // if (reader.readAsBinaryString !== undefined)
       //   reader.readAsBinaryString(image);
