@@ -355,7 +355,7 @@ export default (function (window, document, undefined) {
           console.log("p", p, this.response)
           var img = this.response;
 
-          parseGPanoXMP(img);
+          parseGPanoXMP(img, p);
           infoDisplay.load.msg.innerHTML = "";
         };
         xhr.onprogress = function (e) {
@@ -519,7 +519,7 @@ export default (function (window, document, undefined) {
      * @private
      * @param {Image} image - Image to read XMP metadata from.
      */
-    function parseGPanoXMP(image) {
+    function parseGPanoXMP(image, server_url) {
       var reader = new FileReader();
       reader.addEventListener("loadend", function () {
         console.log('result',reader.result, reader)
@@ -610,7 +610,7 @@ export default (function (window, document, undefined) {
         }
 
         // Load panorama
-        panoImage.src = window.URL.createObjectURL(image);
+        panoImage.src = server_url;
         console.log('panoImage.src', panoImage.src);
       });
       reader.addEventListener("error", function () {
