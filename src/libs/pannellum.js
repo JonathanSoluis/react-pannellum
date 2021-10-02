@@ -509,7 +509,8 @@ export default (function (window, document, undefined) {
       setHfov(config.hfov); // possibly adapt hfov after configuration and canvas is complete; prevents empty space on top or bottom by zomming out too much
       setTimeout(function () {
         isTimedOut = true;
-      }, 5000);
+      }, 500);
+
 
     }
 
@@ -611,7 +612,7 @@ export default (function (window, document, undefined) {
 
         // Load panorama
         console.log('load panorama image', image)
-        panoImage.src = window.URL.createObjectURL(image);
+        panoImage.src = server_url;
         console.log('panoImage.src', panoImage.src);
       });
       reader.addEventListener("error", function () {

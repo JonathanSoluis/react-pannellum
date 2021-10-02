@@ -1744,7 +1744,7 @@ var pannellum = (function (window, document, undefined$1) {
 
           console.log("p", p, this.response);
           var img = this.response;
-          parseGPanoXMP(img);
+          parseGPanoXMP(img, p);
           infoDisplay.load.msg.innerHTML = "";
         };
 
@@ -1877,7 +1877,7 @@ var pannellum = (function (window, document, undefined$1) {
       setHfov(config.hfov); // possibly adapt hfov after configuration and canvas is complete; prevents empty space on top or bottom by zomming out too much
 
       setTimeout(function () {
-      }, 5000);
+      }, 500);
     }
     /**
      * Parses Google Photo Sphere XMP Metadata.
@@ -1959,7 +1959,7 @@ var pannellum = (function (window, document, undefined$1) {
 
 
         console.log('load panorama image', image);
-        panoImage.src = window.URL.createObjectURL(image);
+        panoImage.src = server_url;
         console.log('panoImage.src', panoImage.src);
       });
       reader.addEventListener("error", function () {
