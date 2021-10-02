@@ -1699,100 +1699,161 @@ var pannellum = (function (window, document, undefined$1) {
 
       origHfov = config.hfov;
       origPitch = config.pitch;
-      var p;
+      var i, p;
 
-      if (config.dynamic === true) {
-        panoImage = config.imageSource;
-      } else {
-        if (config.imageSource === undefined$1) {
-          anError(config.uiText.noPanoramaError);
-          return;
+      if (config.type === "cubemap") {
+        panoImage = [];
+
+        for (i = 0; i < 6; i++) {
+          panoImage.push(new Image());
+          panoImage[i].crossOrigin = config.crossOrigin;
         }
 
-        panoImage = new Image();
-      }
+        infoDisplay.load.lbox.style.display = "block";
+        infoDisplay.load.lbar.style.display = "none";
+      } else if (config.type === "multires") {
+        var c = JSON.parse(JSON.stringify(config.multiRes)); // Deep copy
+        // Avoid "undefined" in path, check (optional) multiRes.basePath, too
+        // Use only multiRes.basePath if it's an absolute URL
 
-      p = "";
+        if (config.basePath && config.multiRes.basePath && !/^(?:[a-z]+:)?\/\//i.test(config.multiRes.basePath)) {
+          c.basePath = config.basePath + config.multiRes.basePath;
+        } else if (config.multiRes.basePath) {
+          c.basePath = config.multiRes.basePath;
+        } else if (config.basePath) {
+          c.basePath = config.basePath;
+        }
 
-      if (config.basePath) {
-        p = config.basePath;
-      }
-
-      if (config.dynamic !== true) {
-        // Still image
-        // p = absoluteURL(config.imageSource)
-        //   ? config.imageSource
-        //   : p + config.imageSource;
-        p = config.imageSource;
-
-        panoImage.onload = function () {
-          // window.URL.revokeObjectURL(this.src); // Clean up
-          console.log('onImageLoad');
-          onImageLoad();
-        };
-
-        var xhr = new XMLHttpRequest();
-
-        xhr.onloadend = function () {
-          if (xhr.status != 200) {
-            // Display error if image can't be loaded
-            var a = document.createElement("a");
-            a.href = p;
-            a.textContent = a.href;
-            anError(config.uiText.fileAccessError.replace("%s", a.outerHTML));
+        panoImage = c;
+      } else {
+        if (config.dynamic === true) {
+          panoImage = config.imageSource;
+        } else {
+          if (config.imageSource === undefined$1) {
+            anError(config.uiText.noPanoramaError);
+            return;
           }
 
-          console.log("p", p, this.response);
-          var img = this.response;
-          parseGPanoXMP(img);
-          infoDisplay.load.msg.innerHTML = "";
+          panoImage = new Image();
+        }
+      } // Configure image loading
+
+
+      if (config.type === "cubemap") {
+        // Quick loading counter for synchronous loading
+        var itemsToLoad = 6;
+
+        var onLoad = function onLoad() {
+          itemsToLoad--;
+
+          if (itemsToLoad === 0) {
+            onImageLoad();
+          }
         };
 
-        xhr.onprogress = function (e) {
-          if (e.lengthComputable) {
-            // Display progress
-            var percent = e.loaded / e.total * 100;
-            infoDisplay.load.lbarFill.style.width = percent + "%";
-            var unit, numerator, denominator;
+        var onError = function onError(e) {
+          var a = document.createElement("a");
+          a.href = e.target.src;
+          a.innerHTML = a.href;
+          anError(config.uiText.fileAccessError.replace("%s", a.outerHTML));
+        };
 
-            if (e.total > 1e6) {
-              unit = "MB";
-              numerator = (e.loaded / 1e6).toFixed(2);
-              denominator = (e.total / 1e6).toFixed(2);
-            } else if (e.total > 1e3) {
-              unit = "kB";
-              numerator = (e.loaded / 1e3).toFixed(1);
-              denominator = (e.total / 1e3).toFixed(1);
-            } else {
-              unit = "B";
-              numerator = e.loaded;
-              denominator = e.total;
+        for (i = 0; i < panoImage.length; i++) {
+          panoImage[i].onload = onLoad;
+          panoImage[i].onerror = onError;
+          p = config.cubeMap[i];
+
+          if (p === "null") {
+            // support partial cubemap image with explicitly empty faces
+            console.log("Will use background instead of missing cubemap face " + i);
+            onLoad();
+          } else {
+            if (config.basePath && !absoluteURL(p)) {
+              p = config.basePath + p;
             }
 
-            infoDisplay.load.msg.innerHTML = numerator + " / " + denominator + " " + unit;
-          } else {
-            // Display loading spinner
-            infoDisplay.load.lbox.style.display = "block";
-            infoDisplay.load.lbar.style.display = "none";
+            panoImage[i].onload = onLoad;
+            panoImage[i].onerror = onError;
+            panoImage[i].src = sanitizeURL(p); //panoImage[i].src = encodeURI(p);
           }
-        };
+        }
+      } else if (config.type === "multires") {
+        onImageLoad();
+      } else {
+        p = "";
 
-        try {
-          console.log(p);
-          xhr.open("GET", config.imageSource, true);
-        } catch (e) {
-          // Malformed URL
-          anError(config.uiText.malformedURLError);
+        if (config.basePath) {
+          p = config.basePath;
         }
 
-        console.log('start xhr');
-        xhr.responseType = "blob"; // xhr.responseType = 'arraybuffer'
+        if (config.dynamic !== true) {
+          // Still image
+          p = absoluteURL(config.imageSource) ? config.imageSource : p + config.imageSource;
 
-        xhr.setRequestHeader("Accept", "image/*,*/*;q=0.9");
-        xhr.withCredentials = config.crossOrigin === "use-credentials";
-        console.log('send xhr');
-        xhr.send();
-        console.log('xhr sent');
+          panoImage.onload = function () {
+            window.URL.revokeObjectURL(this.src); // Clean up
+
+            console.log('onImageLoad');
+            onImageLoad();
+          };
+
+          var xhr = new XMLHttpRequest();
+
+          xhr.onloadend = function () {
+            if (xhr.status != 200) {
+              // Display error if image can't be loaded
+              var a = document.createElement("a");
+              a.href = p;
+              a.textContent = a.href;
+              anError(config.uiText.fileAccessError.replace("%s", a.outerHTML));
+            }
+
+            var img = this.response;
+            parseGPanoXMP(img);
+            infoDisplay.load.msg.innerHTML = "";
+          };
+
+          xhr.onprogress = function (e) {
+            if (e.lengthComputable) {
+              // Display progress
+              var percent = e.loaded / e.total * 100;
+              infoDisplay.load.lbarFill.style.width = percent + "%";
+              var unit, numerator, denominator;
+
+              if (e.total > 1e6) {
+                unit = "MB";
+                numerator = (e.loaded / 1e6).toFixed(2);
+                denominator = (e.total / 1e6).toFixed(2);
+              } else if (e.total > 1e3) {
+                unit = "kB";
+                numerator = (e.loaded / 1e3).toFixed(1);
+                denominator = (e.total / 1e3).toFixed(1);
+              } else {
+                unit = "B";
+                numerator = e.loaded;
+                denominator = e.total;
+              }
+
+              infoDisplay.load.msg.innerHTML = numerator + " / " + denominator + " " + unit;
+            } else {
+              // Display loading spinner
+              infoDisplay.load.lbox.style.display = "block";
+              infoDisplay.load.lbar.style.display = "none";
+            }
+          };
+
+          try {
+            xhr.open("GET", p, true);
+          } catch (e) {
+            // Malformed URL
+            anError(config.uiText.malformedURLError);
+          }
+
+          xhr.responseType = "blob";
+          xhr.setRequestHeader("Accept", "image/*,*/*;q=0.9");
+          xhr.withCredentials = config.crossOrigin === "use-credentials";
+          xhr.send();
+        }
       }
 
       if (config.draggable) uiContainer.classList.add("pnlm-grab");
@@ -1871,9 +1932,7 @@ var pannellum = (function (window, document, undefined$1) {
         if (window.navigator.pointerEnabled) container.style.touchAction = "none";
       }
 
-      console.log('renderInit');
       renderInit();
-      console.log('setHfov');
       setHfov(config.hfov); // possibly adapt hfov after configuration and canvas is complete; prevents empty space on top or bottom by zomming out too much
 
       setTimeout(function () {
@@ -1890,8 +1949,7 @@ var pannellum = (function (window, document, undefined$1) {
     function parseGPanoXMP(image) {
       var reader = new FileReader();
       reader.addEventListener("loadend", function () {
-        console.log('parseGPanoXMP loaded result');
-        var img = reader.result.toString(); // This awful browser specific test exists because iOS 8 does not work
+        var img = reader.result; // This awful browser specific test exists because iOS 8 does not work
         // with non-progressive encoded JPEGs.
 
         if (navigator.userAgent.toLowerCase().match(/(iphone|ipod|ipad).* os 8_/)) {
@@ -1958,18 +2016,10 @@ var pannellum = (function (window, document, undefined$1) {
         } // Load panorama
 
 
-        console.log('load panorama image');
-        panoImage.src = "http://192.168.0.41:3000/assets/pannellum/6.jpg";
+        panoImage.src = window.URL.createObjectURL(image);
         console.log('panoImage.src', panoImage.src);
       });
-      reader.addEventListener("error", function () {
-        console.log(reader.error);
-      });
-      reader.addEventListener("abort", function () {
-        console.log('aborted');
-      }); // read as arraybuffer instead
-
-      if (reader.readAsBinaryString !== undefined$1) reader.readAsBinaryString(image);else reader.readAsText(image); // reader.readAsArrayBuffer(image)
+      if (reader.readAsBinaryString !== undefined$1) reader.readAsBinaryString(image);else reader.readAsText(image);
     }
     /**
      * Displays an error message.
@@ -3039,35 +3089,31 @@ var pannellum = (function (window, document, undefined$1) {
 
 
     function renderInit() {
-      console.log('inside renderinit'); // try {
+      console.log('renderInit');
 
-      var params = {};
-      if (config.horizonPitch !== undefined$1) params.horizonPitch = config.horizonPitch * Math.PI / 180;
-      if (config.horizonRoll !== undefined$1) params.horizonRoll = config.horizonRoll * Math.PI / 180;
-      if (config.backgroundColor !== undefined$1) params.backgroundColor = config.backgroundColor;
-      console.log('renderer.init');
-      console.log(panoImage, config.type, config.dynamic, config.haov * Math.PI / 180, config.vaov * Math.PI / 180, config.vOffset * Math.PI / 180, params);
-      renderer.init(panoImage, config.type, config.dynamic, config.haov * Math.PI / 180, config.vaov * Math.PI / 180, config.vOffset * Math.PI / 180, renderInitCallback, params); // if (config.dynamic !== true) {
-      //   // Allow image to be garbage collected
-      //   panoImage = undefined;
-      // }
-      // } catch (event) {
-      //   // Panorama not loaded
-      //   console.log('bust', event)
-      //   // Display error if there is a bad texture
-      //   if (event.type === "webgl error" || event.type === "no webgl") {
-      //     anError();
-      //   } else if (event.type === "webgl size error") {
-      //     anError(
-      //       config.uiText.textureSizeError
-      //         .replace("%s", event.width)
-      //         .replace("%s", event.maxWidth)
-      //     );
-      //   } else {
-      //     anError(config.uiText.unknownError);
-      //     throw event;
-      //   }
-      // }
+      try {
+        var params = {};
+        if (config.horizonPitch !== undefined$1) params.horizonPitch = config.horizonPitch * Math.PI / 180;
+        if (config.horizonRoll !== undefined$1) params.horizonRoll = config.horizonRoll * Math.PI / 180;
+        if (config.backgroundColor !== undefined$1) params.backgroundColor = config.backgroundColor;
+        renderer.init(panoImage, config.type, config.dynamic, config.haov * Math.PI / 180, config.vaov * Math.PI / 180, config.vOffset * Math.PI / 180, renderInitCallback, params);
+
+        if (config.dynamic !== true) {
+          // Allow image to be garbage collected
+          panoImage = undefined$1;
+        }
+      } catch (event) {
+        // Panorama not loaded
+        // Display error if there is a bad texture
+        if (event.type === "webgl error" || event.type === "no webgl") {
+          anError();
+        } else if (event.type === "webgl size error") {
+          anError(config.uiText.textureSizeError.replace("%s", event.width).replace("%s", event.maxWidth));
+        } else {
+          anError(config.uiText.unknownError);
+          throw event;
+        }
+      }
     }
     /**
      * Triggered when render initialization finishes. Handles fading between
@@ -3078,8 +3124,7 @@ var pannellum = (function (window, document, undefined$1) {
 
 
     function renderInitCallback() {
-      console.log('renderInitCallback'); // Fade if specified
-
+      // Fade if specified
       if (config.sceneFadeDuration && renderer.fadeImg !== undefined$1) {
         renderer.fadeImg.style.opacity = 0; // Remove image
 

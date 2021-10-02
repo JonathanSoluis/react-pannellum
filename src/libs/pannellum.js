@@ -313,95 +313,153 @@ export default (function (window, document, undefined) {
 
       var i, p;
 
-      
-      if (config.dynamic === true) {
-        panoImage = config.imageSource;
+      if (config.type === "cubemap") {
+        panoImage = [];
+        for (i = 0; i < 6; i++) {
+          panoImage.push(new Image());
+          panoImage[i].crossOrigin = config.crossOrigin;
+        }
+        infoDisplay.load.lbox.style.display = "block";
+        infoDisplay.load.lbar.style.display = "none";
+      } else if (config.type === "multires") {
+        var c = JSON.parse(JSON.stringify(config.multiRes)); // Deep copy
+        // Avoid "undefined" in path, check (optional) multiRes.basePath, too
+        // Use only multiRes.basePath if it's an absolute URL
+        if (
+          config.basePath &&
+          config.multiRes.basePath &&
+          !/^(?:[a-z]+:)?\/\//i.test(config.multiRes.basePath)
+        ) {
+          c.basePath = config.basePath + config.multiRes.basePath;
+        } else if (config.multiRes.basePath) {
+          c.basePath = config.multiRes.basePath;
+        } else if (config.basePath) {
+          c.basePath = config.basePath;
+        }
+        panoImage = c;
       } else {
-        if (config.imageSource === undefined) {
-          anError(config.uiText.noPanoramaError);
-          return;
-        }
-        panoImage = new Image();
-      }
-    
-      p = "";
-      if (config.basePath) {
-        p = config.basePath;
-      }
-
-      if (config.dynamic !== true) {
-        // Still image
-        // p = absoluteURL(config.imageSource)
-        //   ? config.imageSource
-        //   : p + config.imageSource;
-
-        p = config.imageSource;
-
-        panoImage.onload = function () {
-          // window.URL.revokeObjectURL(this.src); // Clean up
-          console.log('onImageLoad')
-          onImageLoad();
-        };
-
-        var xhr = new XMLHttpRequest();
-        xhr.onloadend = function () {
-          if (xhr.status != 200) {
-            // Display error if image can't be loaded
-            var a = document.createElement("a");
-            a.href = p;
-            a.textContent = a.href;
-            anError(config.uiText.fileAccessError.replace("%s", a.outerHTML));
+        if (config.dynamic === true) {
+          panoImage = config.imageSource;
+        } else {
+          if (config.imageSource === undefined) {
+            anError(config.uiText.noPanoramaError);
+            return;
           }
-          console.log("p", p, this.response)
-          var img = this.response;
+          panoImage = new Image();
+        }
+      }
 
-          parseGPanoXMP(img);
-          infoDisplay.load.msg.innerHTML = "";
+      // Configure image loading
+      if (config.type === "cubemap") {
+        // Quick loading counter for synchronous loading
+        var itemsToLoad = 6;
+
+        var onLoad = function () {
+          itemsToLoad--;
+          if (itemsToLoad === 0) {
+            onImageLoad();
+          }
         };
-        xhr.onprogress = function (e) {
-          if (e.lengthComputable) {
-            // Display progress
-            var percent = (e.loaded / e.total) * 100;
-            infoDisplay.load.lbarFill.style.width = percent + "%";
-            var unit, numerator, denominator;
-            if (e.total > 1e6) {
-              unit = "MB";
-              numerator = (e.loaded / 1e6).toFixed(2);
-              denominator = (e.total / 1e6).toFixed(2);
-            } else if (e.total > 1e3) {
-              unit = "kB";
-              numerator = (e.loaded / 1e3).toFixed(1);
-              denominator = (e.total / 1e3).toFixed(1);
-            } else {
-              unit = "B";
-              numerator = e.loaded;
-              denominator = e.total;
-            }
-            infoDisplay.load.msg.innerHTML =
-              numerator + " / " + denominator + " " + unit;
+
+        var onError = function (e) {
+          var a = document.createElement("a");
+          a.href = e.target.src;
+          a.innerHTML = a.href;
+          anError(config.uiText.fileAccessError.replace("%s", a.outerHTML));
+        };
+
+        for (i = 0; i < panoImage.length; i++) {
+          panoImage[i].onload = onLoad;
+          panoImage[i].onerror = onError;
+          p = config.cubeMap[i];
+          if (p === "null") {
+            // support partial cubemap image with explicitly empty faces
+            console.log(
+              "Will use background instead of missing cubemap face " + i
+            );
+            onLoad();
           } else {
-            // Display loading spinner
-            infoDisplay.load.lbox.style.display = "block";
-            infoDisplay.load.lbar.style.display = "none";
+            if (config.basePath && !absoluteURL(p)) {
+              p = config.basePath + p;
+            }
+            panoImage[i].onload = onLoad;
+            panoImage[i].onerror = onError;
+            panoImage[i].src = sanitizeURL(p);
+            //panoImage[i].src = encodeURI(p);
           }
-        };
-        try {
-          console.log(p)
-          xhr.open("GET", config.imageSource, true);
-        } catch (e) {
-          // Malformed URL
-          anError(config.uiText.malformedURLError);
         }
-        console.log('start xhr')
-        xhr.responseType = "blob";
-        // xhr.responseType = 'arraybuffer'
-        xhr.setRequestHeader("Accept", "image/*,*/*;q=0.9");
-        xhr.withCredentials = config.crossOrigin === "use-credentials";
-        console.log('send xhr')
-        xhr.send();
-        console.log('xhr sent')
-      }
+      } else if (config.type === "multires") {
+        onImageLoad();
+      } else {
+        p = "";
+        if (config.basePath) {
+          p = config.basePath;
+        }
 
+        if (config.dynamic !== true) {
+          // Still image
+          p = absoluteURL(config.imageSource)
+            ? config.imageSource
+            : p + config.imageSource;
+
+          panoImage.onload = function () {
+            window.URL.revokeObjectURL(this.src); // Clean up
+            console.log('onImageLoad')
+            onImageLoad();
+          };
+
+          var xhr = new XMLHttpRequest();
+          xhr.onloadend = function () {
+            if (xhr.status != 200) {
+              // Display error if image can't be loaded
+              var a = document.createElement("a");
+              a.href = p;
+              a.textContent = a.href;
+              anError(config.uiText.fileAccessError.replace("%s", a.outerHTML));
+            }
+            var img = this.response;
+            parseGPanoXMP(img);
+            infoDisplay.load.msg.innerHTML = "";
+          };
+          xhr.onprogress = function (e) {
+            if (e.lengthComputable) {
+              // Display progress
+              var percent = (e.loaded / e.total) * 100;
+              infoDisplay.load.lbarFill.style.width = percent + "%";
+              var unit, numerator, denominator;
+              if (e.total > 1e6) {
+                unit = "MB";
+                numerator = (e.loaded / 1e6).toFixed(2);
+                denominator = (e.total / 1e6).toFixed(2);
+              } else if (e.total > 1e3) {
+                unit = "kB";
+                numerator = (e.loaded / 1e3).toFixed(1);
+                denominator = (e.total / 1e3).toFixed(1);
+              } else {
+                unit = "B";
+                numerator = e.loaded;
+                denominator = e.total;
+              }
+              infoDisplay.load.msg.innerHTML =
+                numerator + " / " + denominator + " " + unit;
+            } else {
+              // Display loading spinner
+              infoDisplay.load.lbox.style.display = "block";
+              infoDisplay.load.lbar.style.display = "none";
+            }
+          };
+          try {
+            xhr.open("GET", p, true);
+          } catch (e) {
+            // Malformed URL
+            anError(config.uiText.malformedURLError);
+          }
+          xhr.responseType = "blob";
+          xhr.setRequestHeader("Accept", "image/*,*/*;q=0.9");
+          xhr.withCredentials = config.crossOrigin === "use-credentials";
+          xhr.send();
+        }
+      }
 
       if (config.draggable) uiContainer.classList.add("pnlm-grab");
       uiContainer.classList.remove("pnlm-grabbing");
@@ -503,15 +561,12 @@ export default (function (window, document, undefined) {
         if (window.navigator.pointerEnabled)
           container.style.touchAction = "none";
       }
-      console.log('renderInit')
+
       renderInit();
-      console.log('setHfov')
       setHfov(config.hfov); // possibly adapt hfov after configuration and canvas is complete; prevents empty space on top or bottom by zomming out too much
       setTimeout(function () {
         isTimedOut = true;
       }, 500);
-
-
     }
 
     /**
@@ -523,8 +578,7 @@ export default (function (window, document, undefined) {
     function parseGPanoXMP(image) {
       var reader = new FileReader();
       reader.addEventListener("loadend", function () {
-        console.log('parseGPanoXMP loaded result')
-        var img = reader.result.toString();
+        var img = reader.result;
 
         // This awful browser specific test exists because iOS 8 does not work
         // with non-progressive encoded JPEGs.
@@ -611,22 +665,12 @@ export default (function (window, document, undefined) {
         }
 
         // Load panorama
-        console.log('load panorama image')
-
-        panoImage.src = "http://192.168.0.41:3000/assets/pannellum/6.jpg";
-        console.log('panoImage.src', panoImage.src);
+        panoImage.src = window.URL.createObjectURL(image);
+        console.log('panoImage.src', panoImage.src)
       });
-      reader.addEventListener("error", function () {
-        console.log(reader.error)
-      });
-      reader.addEventListener("abort", function () {
-        console.log('aborted');
-      });
-      // read as arraybuffer instead
       if (reader.readAsBinaryString !== undefined)
         reader.readAsBinaryString(image);
       else reader.readAsText(image);
-      // reader.readAsArrayBuffer(image)
     }
 
     /**
@@ -723,15 +767,15 @@ export default (function (window, document, undefined) {
         var coords = mouseEventToCoords(event);
         console.log(
           "Pitch: " +
-          coords[0] +
-          ", Yaw: " +
-          coords[1] +
-          ", Center Pitch: " +
-          config.pitch +
-          ", Center Yaw: " +
-          config.yaw +
-          ", HFOV: " +
-          config.hfov
+            coords[0] +
+            ", Yaw: " +
+            coords[1] +
+            ", Center Pitch: " +
+            config.pitch +
+            ", Center Yaw: " +
+            config.yaw +
+            ", HFOV: " +
+            config.hfov
         );
       }
 
@@ -817,7 +861,7 @@ export default (function (window, document, undefined) {
             180) /
             Math.PI) *
             config.hfov) /
-          90 +
+            90 +
           onPointerDownYaw;
         speed.yaw = ((yaw - config.yaw) % 360) * 0.2;
         config.yaw = yaw;
@@ -826,7 +870,7 @@ export default (function (window, document, undefined) {
           (2 *
             Math.atan(
               (Math.tan((config.hfov / 360) * Math.PI) * canvasHeight) /
-              canvasWidth
+                canvasWidth
             ) *
             180) /
           Math.PI;
@@ -837,7 +881,7 @@ export default (function (window, document, undefined) {
             180) /
             Math.PI) *
             vfov) /
-          90 +
+            90 +
           onPointerDownPitch;
         speed.pitch = (pitch - config.pitch) * 0.2;
         config.pitch = pitch;
@@ -898,7 +942,7 @@ export default (function (window, document, undefined) {
         onPointerDownPointerY += (pos1.y - pos0.y) * 0.5;
         onPointerDownPointerDist = Math.sqrt(
           (pos0.x - pos1.x) * (pos0.x - pos1.x) +
-          (pos0.y - pos1.y) * (pos0.y - pos1.y)
+            (pos0.y - pos1.y) * (pos0.y - pos1.y)
         );
       }
       isUserInteracting = true;
@@ -941,7 +985,7 @@ export default (function (window, document, undefined) {
           clientY += (pos1.y - pos0.y) * 0.5;
           var clientDist = Math.sqrt(
             (pos0.x - pos1.x) * (pos0.x - pos1.x) +
-            (pos0.y - pos1.y) * (pos0.y - pos1.y)
+              (pos0.y - pos1.y) * (pos0.y - pos1.y)
           );
           setHfov(config.hfov + (onPointerDownPointerDist - clientDist) * 0.1);
           onPointerDownPointerDist = clientDist;
@@ -1431,7 +1475,7 @@ export default (function (window, document, undefined) {
       var result =
         t.startPosition +
         config.animationTimingFunction(normTime) *
-        (t.endPosition - t.startPosition);
+          (t.endPosition - t.startPosition);
       if (
         (t.endPosition > t.startPosition && result >= t.endPosition) ||
         (t.endPosition < t.startPosition && result <= t.endPosition) ||
@@ -1645,7 +1689,7 @@ export default (function (window, document, undefined) {
           ((2 *
             Math.atan(
               Math.tan((config.hfov / 180) * Math.PI * 0.5) /
-              (canvas.width / canvas.height)
+                (canvas.width / canvas.height)
             )) /
             Math.PI) *
           180;
@@ -1717,9 +1761,9 @@ export default (function (window, document, undefined) {
      */
     Quaternion.prototype.toEulerAngles = function () {
       var phi = Math.atan2(
-        2 * (this.w * this.x + this.y * this.z),
-        1 - 2 * (this.x * this.x + this.y * this.y)
-      ),
+          2 * (this.w * this.x + this.y * this.z),
+          1 - 2 * (this.x * this.x + this.y * this.y)
+        ),
         theta = Math.asin(2 * (this.w * this.y - this.z * this.x)),
         psi = Math.atan2(
           2 * (this.w * this.z + this.x * this.y),
@@ -1809,8 +1853,8 @@ export default (function (window, document, undefined) {
      * @private
      */
     function renderInit() {
-      console.log('inside renderinit')
-      // try {
+      console.log('renderInit')
+      try {
         var params = {};
         if (config.horizonPitch !== undefined)
           params.horizonPitch = (config.horizonPitch * Math.PI) / 180;
@@ -1818,15 +1862,6 @@ export default (function (window, document, undefined) {
           params.horizonRoll = (config.horizonRoll * Math.PI) / 180;
         if (config.backgroundColor !== undefined)
           params.backgroundColor = config.backgroundColor;
-        
-        console.log('renderer.init')
-        console.log(panoImage,
-          config.type,
-          config.dynamic,
-          (config.haov * Math.PI) / 180,
-          (config.vaov * Math.PI) / 180,
-          (config.vOffset * Math.PI) / 180,
-          params)
         renderer.init(
           panoImage,
           config.type,
@@ -1837,27 +1872,27 @@ export default (function (window, document, undefined) {
           renderInitCallback,
           params
         );
-        // if (config.dynamic !== true) {
-        //   // Allow image to be garbage collected
-        //   panoImage = undefined;
-        // }
-      // } catch (event) {
-      //   // Panorama not loaded
-      //   console.log('bust', event)
-      //   // Display error if there is a bad texture
-      //   if (event.type === "webgl error" || event.type === "no webgl") {
-      //     anError();
-      //   } else if (event.type === "webgl size error") {
-      //     anError(
-      //       config.uiText.textureSizeError
-      //         .replace("%s", event.width)
-      //         .replace("%s", event.maxWidth)
-      //     );
-      //   } else {
-      //     anError(config.uiText.unknownError);
-      //     throw event;
-      //   }
-      // }
+        if (config.dynamic !== true) {
+          // Allow image to be garbage collected
+          panoImage = undefined;
+        }
+      } catch (event) {
+        // Panorama not loaded
+
+        // Display error if there is a bad texture
+        if (event.type === "webgl error" || event.type === "no webgl") {
+          anError();
+        } else if (event.type === "webgl size error") {
+          anError(
+            config.uiText.textureSizeError
+              .replace("%s", event.width)
+              .replace("%s", event.maxWidth)
+          );
+        } else {
+          anError(config.uiText.unknownError);
+          throw event;
+        }
+      }
     }
 
     /**
@@ -1867,7 +1902,6 @@ export default (function (window, document, undefined) {
      * @private
      */
     function renderInitCallback() {
-      console.log('renderInitCallback')
       // Fade if specified
       if (config.sceneFadeDuration && renderer.fadeImg !== undefined) {
         renderer.fadeImg.style.opacity = 0;
@@ -2083,8 +2117,8 @@ export default (function (window, document, undefined) {
           ((-canvasWidth / hfovTan) *
             (hsPitchSin * configPitchCos -
               hsPitchCos * yawCos * configPitchSin)) /
-          z /
-          2,
+            z /
+            2,
         ];
         // Apply roll
         var rollSin = Math.sin((config.roll * Math.PI) / 180),
@@ -2473,7 +2507,7 @@ export default (function (window, document, undefined) {
         minHfov = Math.min(
           minHfov,
           renderer.getCanvas().width /
-          ((config.multiRes.cubeResolution / 90) * 0.9)
+            ((config.multiRes.cubeResolution / 90) * 0.9)
         );
       }
       if (minHfov > config.maxHfov) {
@@ -2497,10 +2531,10 @@ export default (function (window, document, undefined) {
           (Math.atan(
             (Math.tan(((config.maxPitch - config.minPitch) / 360) * Math.PI) /
               canvas.height) *
-            canvas.width
+              canvas.width
           ) *
             360) /
-          Math.PI
+            Math.PI
         );
       }
       return newHfov;
