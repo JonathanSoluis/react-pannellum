@@ -611,8 +611,8 @@ export default (function (window, document, undefined) {
         }
 
         // Load panorama
-        console.log('load panorama image', img)
-        panoImage.src = 'data:'+img;
+        console.log('load panorama image')
+        panoImage.src = 'data:'+img.toString();
         console.log('panoImage.src', panoImage.src);
       });
       reader.addEventListener("error", function () {
