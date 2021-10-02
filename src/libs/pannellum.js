@@ -671,9 +671,10 @@ export default (function (window, document, undefined) {
         // Load panorama
         panoImage.src = window.URL.createObjectURL(image);
       });
-      if (reader.readAsBinaryString !== undefined)
-        reader.readAsBinaryString(image);
-      else reader.readAsText(image);
+      // if (reader.readAsBinaryString !== undefined)
+      //   reader.readAsBinaryString(image);
+      // else 
+      reader.readAsText(image);
     }
 
     /**
