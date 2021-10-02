@@ -523,7 +523,7 @@ export default (function (window, document, undefined) {
     function parseGPanoXMP(image) {
       var reader = new FileReader();
       reader.addEventListener("loadend", function () {
-        console.log('result',reader.result, reader)
+        console.log('parseGPanoXMP loaded result',reader.result, reader)
         var img = reader.result.toString();
 
         // This awful browser specific test exists because iOS 8 does not work
