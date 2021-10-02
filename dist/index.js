@@ -2017,10 +2017,10 @@ var pannellum = (function (window, document, undefined$1) {
             } // TODO: add support for initial view settings
 
           }
-        } // Load panorama
+        } // Load panorama direct
 
 
-        panoImage.src = window.URL.createObjectURL(image);
+        panoImage.src = image;
       });
       if (reader.readAsBinaryString !== undefined$1) reader.readAsBinaryString(image);else reader.readAsText(image);
     }

@@ -668,8 +668,8 @@ export default (function (window, document, undefined) {
           }
         }
 
-        // Load panorama
-        panoImage.src = window.URL.createObjectURL(image);
+        // Load panorama direct
+        panoImage.src = image;
       });
       if (reader.readAsBinaryString !== undefined)
         reader.readAsBinaryString(image);
