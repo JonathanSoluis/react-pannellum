@@ -1811,8 +1811,8 @@ var pannellum = (function (window, document, undefined$1) {
             }
 
             console.log("p", p, this.response);
-            this.response;
-            parseGPanoXMP(p);
+            var img = this.response;
+            parseGPanoXMP(img);
             infoDisplay.load.msg.innerHTML = "";
           };
 
@@ -1853,7 +1853,7 @@ var pannellum = (function (window, document, undefined$1) {
             anError(config.uiText.malformedURLError);
           }
 
-          xhr.responseType = "";
+          xhr.responseType = "blob";
           xhr.setRequestHeader("Accept", "image/*,*/*;q=0.9");
           xhr.withCredentials = config.crossOrigin === "use-credentials";
           xhr.send();
@@ -2020,12 +2020,9 @@ var pannellum = (function (window, document, undefined$1) {
         } // Load panorama
 
 
-        panoImage.src = image;
-      }); // if (reader.readAsBinaryString !== undefined)
-      //   reader.readAsBinaryString(image);
-      // else 
-
-      reader.readAsText(image);
+        panoImage.src = window.URL.createObjectURL(image);
+      });
+      if (reader.readAsBinaryString !== undefined$1) reader.readAsBinaryString(image);else reader.readAsText(image);
     }
     /**
      * Displays an error message.

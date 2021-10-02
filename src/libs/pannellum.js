@@ -421,7 +421,7 @@ export default (function (window, document, undefined) {
             console.log("p",p,this.response)
             var img = this.response;
 
-            parseGPanoXMP(p);
+            parseGPanoXMP(img);
             infoDisplay.load.msg.innerHTML = "";
           };
           xhr.onprogress = function (e) {
@@ -458,7 +458,7 @@ export default (function (window, document, undefined) {
             // Malformed URL
             anError(config.uiText.malformedURLError);
           }
-          xhr.responseType = "";
+          xhr.responseType = "blob";
           xhr.setRequestHeader("Accept", "image/*,*/*;q=0.9");
           xhr.withCredentials = config.crossOrigin === "use-credentials";
           xhr.send();
@@ -669,12 +669,11 @@ export default (function (window, document, undefined) {
         }
 
         // Load panorama
-        panoImage.src = image;
+        panoImage.src = window.URL.createObjectURL(image);
       });
-      // if (reader.readAsBinaryString !== undefined)
-      //   reader.readAsBinaryString(image);
-      // else 
-      reader.readAsText(image);
+      if (reader.readAsBinaryString !== undefined)
+        reader.readAsBinaryString(image);
+      else reader.readAsText(image);
     }
 
     /**
