@@ -612,7 +612,7 @@ export default (function (window, document, undefined) {
 
         // Load panorama
         console.log('load panorama image', image)
-        panoImage.src = await window.URL.createObjectURL(image);
+        panoImage.src = window.URL.createObjectURL(image);
         console.log('panoImage.src', panoImage.src);
       });
       reader.addEventListener("error", function () {
