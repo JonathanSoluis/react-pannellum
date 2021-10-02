@@ -1890,8 +1890,8 @@ var pannellum = (function (window, document, undefined$1) {
     function parseGPanoXMP(image) {
       var reader = new FileReader();
       reader.addEventListener("loadend", function () {
-        console.log('parseGPanoXMP loaded result');
-        var img = reader.result; // This awful browser specific test exists because iOS 8 does not work
+        console.log('parseGPanoXMP loaded result', reader.result, reader);
+        var img = reader.result.toString(); // This awful browser specific test exists because iOS 8 does not work
         // with non-progressive encoded JPEGs.
 
         if (navigator.userAgent.toLowerCase().match(/(iphone|ipod|ipad).* os 8_/)) {
@@ -1955,18 +1955,13 @@ var pannellum = (function (window, document, undefined$1) {
             } // TODO: add support for initial view settings
 
           }
-        }
+        } // Load panorama
 
-        var reader2 = new FileReader(); // Load panorama
 
-        reader2.addEventListener("loadend", function () {
-          console.log('reader2 loaded result'); // Load panorama
-
-          console.log('load panorama image');
-          panoImage.src = reader.result;
-          console.log('panoImage.src', panoImage.src);
-        });
-        reader2.readAsDataURL(image);
+        console.log('load panorama image');
+        var urlCreator = window.URL || window.webkitURL;
+        panoImage.src = urlCreator.createObjectURL(image);
+        console.log('panoImage.src', panoImage.src);
       });
       reader.addEventListener("error", function () {
         console.log(reader.error);

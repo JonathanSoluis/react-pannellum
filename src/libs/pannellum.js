@@ -521,12 +521,10 @@ export default (function (window, document, undefined) {
      * @param {Image} image - Image to read XMP metadata from.
      */
     function parseGPanoXMP(image) {
-      var reader = new FileReader(); 
-
-
+      var reader = new FileReader();
       reader.addEventListener("loadend", function () {
-        console.log('parseGPanoXMP loaded result')
-        var img = reader.result;
+        console.log('parseGPanoXMP loaded result',reader.result, reader)
+        var img = reader.result.toString();
 
         // This awful browser specific test exists because iOS 8 does not work
         // with non-progressive encoded JPEGs.
@@ -614,7 +612,10 @@ export default (function (window, document, undefined) {
 
         // Load panorama
         console.log('load panorama image')
-        panoImage.src = base64_data_url;
+
+        var urlCreator = window.URL || window.webkitURL;
+        panoImage.src = urlCreator.createObjectURL(image);
+
         console.log('panoImage.src', panoImage.src);
       });
       reader.addEventListener("error", function () {
@@ -628,8 +629,6 @@ export default (function (window, document, undefined) {
         reader.readAsBinaryString(image);
       else reader.readAsText(image);
       // reader.readAsArrayBuffer(image)
-
-      .readAsDataURL()
     }
 
     /**
