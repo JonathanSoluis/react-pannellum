@@ -1824,7 +1824,6 @@ export default (function (window, document, undefined) {
           (config.haov * Math.PI) / 180,
           (config.vaov * Math.PI) / 180,
           (config.vOffset * Math.PI) / 180,
-          renderInitCallback,
           params)
         renderer.init(
           panoImage,
@@ -1836,10 +1835,10 @@ export default (function (window, document, undefined) {
           renderInitCallback,
           params
         );
-        if (config.dynamic !== true) {
-          // Allow image to be garbage collected
-          panoImage = undefined;
-        }
+        // if (config.dynamic !== true) {
+        //   // Allow image to be garbage collected
+        //   panoImage = undefined;
+        // }
       // } catch (event) {
       //   // Panorama not loaded
       //   console.log('bust', event)

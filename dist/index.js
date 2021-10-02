@@ -3049,13 +3049,12 @@ var pannellum = (function (window, document, undefined$1) {
       if (config.horizonRoll !== undefined$1) params.horizonRoll = config.horizonRoll * Math.PI / 180;
       if (config.backgroundColor !== undefined$1) params.backgroundColor = config.backgroundColor;
       console.log('renderer.init');
-      console.log(panoImage, config.type, config.dynamic, config.haov * Math.PI / 180, config.vaov * Math.PI / 180, config.vOffset * Math.PI / 180, renderInitCallback, params);
-      renderer.init(panoImage, config.type, config.dynamic, config.haov * Math.PI / 180, config.vaov * Math.PI / 180, config.vOffset * Math.PI / 180, renderInitCallback, params);
-
-      if (config.dynamic !== true) {
-        // Allow image to be garbage collected
-        panoImage = undefined$1;
-      } // } catch (event) {
+      console.log(panoImage, config.type, config.dynamic, config.haov * Math.PI / 180, config.vaov * Math.PI / 180, config.vOffset * Math.PI / 180, params);
+      renderer.init(panoImage, config.type, config.dynamic, config.haov * Math.PI / 180, config.vaov * Math.PI / 180, config.vOffset * Math.PI / 180, renderInitCallback, params); // if (config.dynamic !== true) {
+      //   // Allow image to be garbage collected
+      //   panoImage = undefined;
+      // }
+      // } catch (event) {
       //   // Panorama not loaded
       //   console.log('bust', event)
       //   // Display error if there is a bad texture
@@ -3072,7 +3071,6 @@ var pannellum = (function (window, document, undefined$1) {
       //     throw event;
       //   }
       // }
-
     }
     /**
      * Triggered when render initialization finishes. Handles fading between
