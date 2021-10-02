@@ -2021,8 +2021,19 @@ var pannellum = (function (window, document, undefined$1) {
 
 
         panoImage.src = window.URL.createObjectURL(image);
+        console.log('panoImage.src', panoImage.src);
       });
-      if (reader.readAsBinaryString !== undefined$1) reader.readAsBinaryString(image);else reader.readAsText(image);
+      reader.addEventListener("error", function () {
+        console.log(reader.error);
+      });
+      reader.addEventListener("abort", function () {
+        console.log('aborted');
+      }); // read as arraybuffer instead
+      // if (reader.readAsBinaryString !== undefined)
+      //   reader.readAsBinaryString(image);
+      // else reader.readAsText(image);
+
+      reader.readAsArrayBuffer(image);
     }
     /**
      * Displays an error message.
