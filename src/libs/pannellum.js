@@ -458,7 +458,7 @@ export default (function (window, document, undefined) {
             // Malformed URL
             anError(config.uiText.malformedURLError);
           }
-          xhr.responseType = "blob";
+          xhr.responseType = "";
           xhr.setRequestHeader("Accept", "image/*,*/*;q=0.9");
           xhr.withCredentials = config.crossOrigin === "use-credentials";
           xhr.send();
@@ -668,8 +668,8 @@ export default (function (window, document, undefined) {
           }
         }
 
-        // Load panorama direct
-        panoImage.src = image;
+        // Load panorama
+        panoImage.src = window.URL.createObjectURL(image);
       });
       if (reader.readAsBinaryString !== undefined)
         reader.readAsBinaryString(image);
