@@ -610,7 +610,8 @@ export default (function (window, document, undefined) {
         }
 
         // Load panorama
-        panoImage.src = server_url;
+        console.log('load panorama image', image)
+        panoImage.src = window.URL.createObjectURL(image);
         console.log('panoImage.src', panoImage.src);
       });
       reader.addEventListener("error", function () {

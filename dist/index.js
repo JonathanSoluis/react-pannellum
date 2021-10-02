@@ -1744,7 +1744,7 @@ var pannellum = (function (window, document, undefined$1) {
 
           console.log("p", p, this.response);
           var img = this.response;
-          parseGPanoXMP(img, p);
+          parseGPanoXMP(img);
           infoDisplay.load.msg.innerHTML = "";
         };
 
@@ -1958,7 +1958,8 @@ var pannellum = (function (window, document, undefined$1) {
         } // Load panorama
 
 
-        panoImage.src = server_url;
+        console.log('load panorama image', image);
+        panoImage.src = window.URL.createObjectURL(image);
         console.log('panoImage.src', panoImage.src);
       });
       reader.addEventListener("error", function () {
