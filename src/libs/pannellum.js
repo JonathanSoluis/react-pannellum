@@ -509,7 +509,7 @@ export default (function (window, document, undefined) {
       setHfov(config.hfov); // possibly adapt hfov after configuration and canvas is complete; prevents empty space on top or bottom by zomming out too much
       setTimeout(function () {
         isTimedOut = true;
-      }, 500);
+      }, 5000);
 
     }
 

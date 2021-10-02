@@ -1877,7 +1877,7 @@ var pannellum = (function (window, document, undefined$1) {
       setHfov(config.hfov); // possibly adapt hfov after configuration and canvas is complete; prevents empty space on top or bottom by zomming out too much
 
       setTimeout(function () {
-      }, 500);
+      }, 5000);
     }
     /**
      * Parses Google Photo Sphere XMP Metadata.
