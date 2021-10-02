@@ -522,7 +522,7 @@ export default (function (window, document, undefined) {
      */
     function parseGPanoXMP(image) {
       var reader = new FileReader(); 
-      
+
 
       reader.addEventListener("loadend", function () {
         console.log('parseGPanoXMP loaded result')
@@ -611,17 +611,11 @@ export default (function (window, document, undefined) {
             // TODO: add support for initial view settings
           }
         }
-        var reader2 = new FileReader();
-          // Load panorama
-          reader2.addEventListener("loadend", function () {
-            console.log('reader2 loaded result')
-            
-            // Load panorama
-            console.log('load panorama image')
-            panoImage.src = reader.result;
-            console.log('panoImage.src', panoImage.src);
-          });
-          reader2.readAsDataURL(image)
+
+        // Load panorama
+        console.log('load panorama image')
+        panoImage.src = base64_data_url;
+        console.log('panoImage.src', panoImage.src);
       });
       reader.addEventListener("error", function () {
         console.log(reader.error)
@@ -635,8 +629,7 @@ export default (function (window, document, undefined) {
       else reader.readAsText(image);
       // reader.readAsArrayBuffer(image)
 
-
-      
+      .readAsDataURL()
     }
 
     /**
