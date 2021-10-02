@@ -1817,6 +1817,14 @@ export default (function (window, document, undefined) {
           params.backgroundColor = config.backgroundColor;
         
         console.log('renderer.init')
+        console.log(panoImage,
+          config.type,
+          config.dynamic,
+          (config.haov * Math.PI) / 180,
+          (config.vaov * Math.PI) / 180,
+          (config.vOffset * Math.PI) / 180,
+          renderInitCallback,
+          params)
         renderer.init(
           panoImage,
           config.type,
