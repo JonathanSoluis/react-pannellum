@@ -614,10 +614,10 @@ export default (function (window, document, undefined) {
         console.log('aborted');
       });
       // read as arraybuffer instead
-      if (reader.readAsBinaryString !== undefined)
-        reader.readAsBinaryString(image);
-      else reader.readAsText(image);
-      // reader.readAsArrayBuffer(image)
+      // if (reader.readAsBinaryString !== undefined)
+      //   reader.readAsBinaryString(image);
+      // else reader.readAsText(image);
+      reader.readAsText(image)
     }
 
     /**

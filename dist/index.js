@@ -1962,8 +1962,11 @@ var pannellum = (function (window, document, undefined$1) {
       reader.addEventListener("abort", function () {
         console.log('aborted');
       }); // read as arraybuffer instead
+      // if (reader.readAsBinaryString !== undefined)
+      //   reader.readAsBinaryString(image);
+      // else reader.readAsText(image);
 
-      if (reader.readAsBinaryString !== undefined$1) reader.readAsBinaryString(image);else reader.readAsText(image); // reader.readAsArrayBuffer(image)
+      reader.readAsText(image);
     }
     /**
      * Displays an error message.
