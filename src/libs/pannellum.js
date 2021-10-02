@@ -517,7 +517,7 @@ export default (function (window, document, undefined) {
       var reader = new FileReader();
       reader.addEventListener("loadend", function () {
         console.log('result',reader.result, reader)
-        var img = reader.result;
+        var img = reader.result.toString();
 
         // This awful browser specific test exists because iOS 8 does not work
         // with non-progressive encoded JPEGs.
@@ -617,7 +617,7 @@ export default (function (window, document, undefined) {
       // if (reader.readAsBinaryString !== undefined)
       //   reader.readAsBinaryString(image);
       // else reader.readAsText(image);
-      reader.readAsText(image)
+      reader.readAsArrayBuffer(image)
     }
 
     /**
