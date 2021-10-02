@@ -1873,6 +1873,7 @@ var pannellum = (function (window, document, undefined$1) {
 
       console.log('renderInit');
       renderInit();
+      console.log('setHfov');
       setHfov(config.hfov); // possibly adapt hfov after configuration and canvas is complete; prevents empty space on top or bottom by zomming out too much
 
       setTimeout(function () {
@@ -3040,6 +3041,8 @@ var pannellum = (function (window, document, undefined$1) {
 
 
     function renderInit() {
+      console.log('inside renderinit');
+
       try {
         var params = {};
         if (config.horizonPitch !== undefined$1) params.horizonPitch = config.horizonPitch * Math.PI / 180;

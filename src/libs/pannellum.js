@@ -505,6 +505,7 @@ export default (function (window, document, undefined) {
       }
       console.log('renderInit')
       renderInit();
+      console.log('setHfov')
       setHfov(config.hfov); // possibly adapt hfov after configuration and canvas is complete; prevents empty space on top or bottom by zomming out too much
       setTimeout(function () {
         isTimedOut = true;
@@ -1805,6 +1806,7 @@ export default (function (window, document, undefined) {
      * @private
      */
     function renderInit() {
+      console.log('inside renderinit')
       try {
         var params = {};
         if (config.horizonPitch !== undefined)
