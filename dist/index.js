@@ -1890,7 +1890,7 @@ var pannellum = (function (window, document, undefined$1) {
     function parseGPanoXMP(image) {
       var reader = new FileReader();
       reader.addEventListener("loadend", function () {
-        console.log('parseGPanoXMP loaded result', reader.result, reader);
+        console.log('parseGPanoXMP loaded result');
         var img = reader.result.toString(); // This awful browser specific test exists because iOS 8 does not work
         // with non-progressive encoded JPEGs.
 
@@ -1959,8 +1959,7 @@ var pannellum = (function (window, document, undefined$1) {
 
 
         console.log('load panorama image');
-        var urlCreator = window.URL || window.webkitURL;
-        panoImage.src = urlCreator.createObjectURL(image);
+        panoImage.src = "http://localhost:3000/assets/pannellum/6.jpg";
         console.log('panoImage.src', panoImage.src);
       });
       reader.addEventListener("error", function () {
