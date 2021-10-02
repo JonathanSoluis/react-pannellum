@@ -3041,33 +3041,36 @@ var pannellum = (function (window, document, undefined$1) {
 
 
     function renderInit() {
-      console.log('inside renderinit');
+      console.log('inside renderinit'); // try {
 
-      try {
-        var params = {};
-        if (config.horizonPitch !== undefined$1) params.horizonPitch = config.horizonPitch * Math.PI / 180;
-        if (config.horizonRoll !== undefined$1) params.horizonRoll = config.horizonRoll * Math.PI / 180;
-        if (config.backgroundColor !== undefined$1) params.backgroundColor = config.backgroundColor;
-        console.log('renderer.init');
-        renderer.init(panoImage, config.type, config.dynamic, config.haov * Math.PI / 180, config.vaov * Math.PI / 180, config.vOffset * Math.PI / 180, renderInitCallback, params);
+      var params = {};
+      if (config.horizonPitch !== undefined$1) params.horizonPitch = config.horizonPitch * Math.PI / 180;
+      if (config.horizonRoll !== undefined$1) params.horizonRoll = config.horizonRoll * Math.PI / 180;
+      if (config.backgroundColor !== undefined$1) params.backgroundColor = config.backgroundColor;
+      console.log('renderer.init');
+      renderer.init(panoImage, config.type, config.dynamic, config.haov * Math.PI / 180, config.vaov * Math.PI / 180, config.vOffset * Math.PI / 180, renderInitCallback, params);
 
-        if (config.dynamic !== true) {
-          // Allow image to be garbage collected
-          panoImage = undefined$1;
-        }
-      } catch (event) {
-        // Panorama not loaded
-        console.log('bust', event); // Display error if there is a bad texture
+      if (config.dynamic !== true) {
+        // Allow image to be garbage collected
+        panoImage = undefined$1;
+      } // } catch (event) {
+      //   // Panorama not loaded
+      //   console.log('bust', event)
+      //   // Display error if there is a bad texture
+      //   if (event.type === "webgl error" || event.type === "no webgl") {
+      //     anError();
+      //   } else if (event.type === "webgl size error") {
+      //     anError(
+      //       config.uiText.textureSizeError
+      //         .replace("%s", event.width)
+      //         .replace("%s", event.maxWidth)
+      //     );
+      //   } else {
+      //     anError(config.uiText.unknownError);
+      //     throw event;
+      //   }
+      // }
 
-        if (event.type === "webgl error" || event.type === "no webgl") {
-          anError();
-        } else if (event.type === "webgl size error") {
-          anError(config.uiText.textureSizeError.replace("%s", event.width).replace("%s", event.maxWidth));
-        } else {
-          anError(config.uiText.unknownError);
-          throw event;
-        }
-      }
     }
     /**
      * Triggered when render initialization finishes. Handles fading between

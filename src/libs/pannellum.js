@@ -1807,7 +1807,7 @@ export default (function (window, document, undefined) {
      */
     function renderInit() {
       console.log('inside renderinit')
-      try {
+      // try {
         var params = {};
         if (config.horizonPitch !== undefined)
           params.horizonPitch = (config.horizonPitch * Math.PI) / 180;
@@ -1831,23 +1831,23 @@ export default (function (window, document, undefined) {
           // Allow image to be garbage collected
           panoImage = undefined;
         }
-      } catch (event) {
-        // Panorama not loaded
-        console.log('bust', event)
-        // Display error if there is a bad texture
-        if (event.type === "webgl error" || event.type === "no webgl") {
-          anError();
-        } else if (event.type === "webgl size error") {
-          anError(
-            config.uiText.textureSizeError
-              .replace("%s", event.width)
-              .replace("%s", event.maxWidth)
-          );
-        } else {
-          anError(config.uiText.unknownError);
-          throw event;
-        }
-      }
+      // } catch (event) {
+      //   // Panorama not loaded
+      //   console.log('bust', event)
+      //   // Display error if there is a bad texture
+      //   if (event.type === "webgl error" || event.type === "no webgl") {
+      //     anError();
+      //   } else if (event.type === "webgl size error") {
+      //     anError(
+      //       config.uiText.textureSizeError
+      //         .replace("%s", event.width)
+      //         .replace("%s", event.maxWidth)
+      //     );
+      //   } else {
+      //     anError(config.uiText.unknownError);
+      //     throw event;
+      //   }
+      // }
     }
 
     /**
