@@ -1726,8 +1726,7 @@ var pannellum = (function (window, document, undefined$1) {
         p = config.imageSource;
 
         panoImage.onload = function () {
-          window.URL.revokeObjectURL(this.src); // Clean up
-
+          // window.URL.revokeObjectURL(this.src); // Clean up
           onImageLoad();
         };
 

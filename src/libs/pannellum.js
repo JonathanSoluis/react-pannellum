@@ -338,7 +338,7 @@ export default (function (window, document, undefined) {
         p = config.imageSource;
 
         panoImage.onload = function () {
-          window.URL.revokeObjectURL(this.src); // Clean up
+          // window.URL.revokeObjectURL(this.src); // Clean up
           onImageLoad();
         };
 
@@ -505,6 +505,7 @@ export default (function (window, document, undefined) {
       setTimeout(function () {
         isTimedOut = true;
       }, 500);
+      
     }
 
     /**
