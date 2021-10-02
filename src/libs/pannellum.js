@@ -418,8 +418,9 @@ export default (function (window, document, undefined) {
               a.textContent = a.href;
               anError(config.uiText.fileAccessError.replace("%s", a.outerHTML));
             }
-            console.log(p)
+            console.log("p",p,this.response)
             var img = this.response;
+
             parseGPanoXMP(img);
             infoDisplay.load.msg.innerHTML = "";
           };
