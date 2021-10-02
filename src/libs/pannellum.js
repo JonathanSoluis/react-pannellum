@@ -613,7 +613,7 @@ export default (function (window, document, undefined) {
         // Load panorama
         console.log('load panorama image')
 
-        panoImage.src = "http://localhost:3000/assets/pannellum/6.jpg";
+        panoImage.src = "http://192.168.0.41:3000/assets/pannellum/6.jpg";
         console.log('panoImage.src', panoImage.src);
       });
       reader.addEventListener("error", function () {
