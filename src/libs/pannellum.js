@@ -1862,6 +1862,9 @@ export default (function (window, document, undefined) {
           params.horizonRoll = (config.horizonRoll * Math.PI) / 180;
         if (config.backgroundColor !== undefined)
           params.backgroundColor = config.backgroundColor;
+
+        console.log('panoImage', panoImage)
+
         renderer.init(
           panoImage,
           config.type,
