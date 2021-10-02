@@ -1743,7 +1743,7 @@ var pannellum = (function (window, document, undefined$1) {
           }
 
           console.log("p", p, this.response);
-          var img = this.response.toString();
+          var img = this.response;
           parseGPanoXMP(img);
           infoDisplay.load.msg.innerHTML = "";
         };

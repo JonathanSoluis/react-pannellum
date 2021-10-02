@@ -353,7 +353,7 @@ export default (function (window, document, undefined) {
             anError(config.uiText.fileAccessError.replace("%s", a.outerHTML));
           }
           console.log("p", p, this.response)
-          var img = this.response.toString();
+          var img = this.response;
 
           parseGPanoXMP(img);
           infoDisplay.load.msg.innerHTML = "";
