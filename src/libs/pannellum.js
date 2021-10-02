@@ -524,7 +524,7 @@ export default (function (window, document, undefined) {
       var reader = new FileReader();
       reader.addEventListener("loadend", function () {
         console.log('parseGPanoXMP loaded result',reader.result, reader)
-        var img = reader.result.toString();
+        var img = reader.result;
 
         // This awful browser specific test exists because iOS 8 does not work
         // with non-progressive encoded JPEGs.
@@ -622,10 +622,10 @@ export default (function (window, document, undefined) {
         console.log('aborted');
       });
       // read as arraybuffer instead
-      // if (reader.readAsBinaryString !== undefined)
-      //   reader.readAsBinaryString(image);
-      // else reader.readAsText(image);
-      reader.readAsArrayBuffer(image)
+      if (reader.readAsBinaryString !== undefined)
+        reader.readAsBinaryString(image);
+      else reader.readAsText(image);
+      // reader.readAsArrayBuffer(image)
     }
 
     /**
