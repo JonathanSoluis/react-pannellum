@@ -313,157 +313,91 @@ export default (function (window, document, undefined) {
 
       var i, p;
 
-      if (config.type === "cubemap") {
-        panoImage = [];
-        for (i = 0; i < 6; i++) {
-          panoImage.push(new Image());
-          panoImage[i].crossOrigin = config.crossOrigin;
-        }
-        infoDisplay.load.lbox.style.display = "block";
-        infoDisplay.load.lbar.style.display = "none";
-      } else if (config.type === "multires") {
-        var c = JSON.parse(JSON.stringify(config.multiRes)); // Deep copy
-        // Avoid "undefined" in path, check (optional) multiRes.basePath, too
-        // Use only multiRes.basePath if it's an absolute URL
-        if (
-          config.basePath &&
-          config.multiRes.basePath &&
-          !/^(?:[a-z]+:)?\/\//i.test(config.multiRes.basePath)
-        ) {
-          c.basePath = config.basePath + config.multiRes.basePath;
-        } else if (config.multiRes.basePath) {
-          c.basePath = config.multiRes.basePath;
-        } else if (config.basePath) {
-          c.basePath = config.basePath;
-        }
-        panoImage = c;
+      
+      if (config.dynamic === true) {
+        panoImage = config.imageSource;
       } else {
-        if (config.dynamic === true) {
-          panoImage = config.imageSource;
-        } else {
-          if (config.imageSource === undefined) {
-            anError(config.uiText.noPanoramaError);
-            return;
-          }
-          panoImage = new Image();
+        if (config.imageSource === undefined) {
+          anError(config.uiText.noPanoramaError);
+          return;
         }
+        panoImage = new Image();
+      }
+    
+      p = "";
+      if (config.basePath) {
+        p = config.basePath;
       }
 
-      // Configure image loading
-      if (config.type === "cubemap") {
-        // Quick loading counter for synchronous loading
-        var itemsToLoad = 6;
+      if (config.dynamic !== true) {
+        // Still image
+        // p = absoluteURL(config.imageSource)
+        //   ? config.imageSource
+        //   : p + config.imageSource;
 
-        var onLoad = function () {
-          itemsToLoad--;
-          if (itemsToLoad === 0) {
-            onImageLoad();
-          }
+        p = config.imageSource;
+
+        panoImage.onload = function () {
+          window.URL.revokeObjectURL(this.src); // Clean up
+          onImageLoad();
         };
 
-        var onError = function (e) {
-          var a = document.createElement("a");
-          a.href = e.target.src;
-          a.innerHTML = a.href;
-          anError(config.uiText.fileAccessError.replace("%s", a.outerHTML));
-        };
-
-        for (i = 0; i < panoImage.length; i++) {
-          panoImage[i].onload = onLoad;
-          panoImage[i].onerror = onError;
-          p = config.cubeMap[i];
-          if (p === "null") {
-            // support partial cubemap image with explicitly empty faces
-            console.log(
-              "Will use background instead of missing cubemap face " + i
-            );
-            onLoad();
-          } else {
-            if (config.basePath && !absoluteURL(p)) {
-              p = config.basePath + p;
-            }
-            panoImage[i].onload = onLoad;
-            panoImage[i].onerror = onError;
-            panoImage[i].src = sanitizeURL(p);
-            //panoImage[i].src = encodeURI(p);
+        var xhr = new XMLHttpRequest();
+        xhr.onloadend = function () {
+          if (xhr.status != 200) {
+            // Display error if image can't be loaded
+            var a = document.createElement("a");
+            a.href = p;
+            a.textContent = a.href;
+            anError(config.uiText.fileAccessError.replace("%s", a.outerHTML));
           }
-        }
-      } else if (config.type === "multires") {
-        onImageLoad();
-      } else {
-        p = "";
-        if (config.basePath) {
-          p = config.basePath;
-        }
+          console.log("p", p, this.response)
+          var img = this.response;
 
-        if (config.dynamic !== true) {
-          // Still image
-          // p = absoluteURL(config.imageSource)
-          //   ? config.imageSource
-          //   : p + config.imageSource;
-
-          p = config.imageSource;
-
-          panoImage.onload = function () {
-            window.URL.revokeObjectURL(this.src); // Clean up
-            onImageLoad();
-          };
-
-          var xhr = new XMLHttpRequest();
-          xhr.onloadend = function () {
-            if (xhr.status != 200) {
-              // Display error if image can't be loaded
-              var a = document.createElement("a");
-              a.href = p;
-              a.textContent = a.href;
-              anError(config.uiText.fileAccessError.replace("%s", a.outerHTML));
-            }
-            console.log("p",p,this.response)
-            var img = this.response;
-
-            parseGPanoXMP(img);
-            infoDisplay.load.msg.innerHTML = "";
-          };
-          xhr.onprogress = function (e) {
-            if (e.lengthComputable) {
-              // Display progress
-              var percent = (e.loaded / e.total) * 100;
-              infoDisplay.load.lbarFill.style.width = percent + "%";
-              var unit, numerator, denominator;
-              if (e.total > 1e6) {
-                unit = "MB";
-                numerator = (e.loaded / 1e6).toFixed(2);
-                denominator = (e.total / 1e6).toFixed(2);
-              } else if (e.total > 1e3) {
-                unit = "kB";
-                numerator = (e.loaded / 1e3).toFixed(1);
-                denominator = (e.total / 1e3).toFixed(1);
-              } else {
-                unit = "B";
-                numerator = e.loaded;
-                denominator = e.total;
-              }
-              infoDisplay.load.msg.innerHTML =
-                numerator + " / " + denominator + " " + unit;
+          parseGPanoXMP(img);
+          infoDisplay.load.msg.innerHTML = "";
+        };
+        xhr.onprogress = function (e) {
+          if (e.lengthComputable) {
+            // Display progress
+            var percent = (e.loaded / e.total) * 100;
+            infoDisplay.load.lbarFill.style.width = percent + "%";
+            var unit, numerator, denominator;
+            if (e.total > 1e6) {
+              unit = "MB";
+              numerator = (e.loaded / 1e6).toFixed(2);
+              denominator = (e.total / 1e6).toFixed(2);
+            } else if (e.total > 1e3) {
+              unit = "kB";
+              numerator = (e.loaded / 1e3).toFixed(1);
+              denominator = (e.total / 1e3).toFixed(1);
             } else {
-              // Display loading spinner
-              infoDisplay.load.lbox.style.display = "block";
-              infoDisplay.load.lbar.style.display = "none";
+              unit = "B";
+              numerator = e.loaded;
+              denominator = e.total;
             }
-          };
-          try {
-            console.log(p)
-            xhr.open("GET", config.imageSource, true);
-          } catch (e) {
-            // Malformed URL
-            anError(config.uiText.malformedURLError);
+            infoDisplay.load.msg.innerHTML =
+              numerator + " / " + denominator + " " + unit;
+          } else {
+            // Display loading spinner
+            infoDisplay.load.lbox.style.display = "block";
+            infoDisplay.load.lbar.style.display = "none";
           }
-          xhr.responseType = "blob";
-          xhr.setRequestHeader("Accept", "image/*,*/*;q=0.9");
-          xhr.withCredentials = config.crossOrigin === "use-credentials";
-          xhr.send();
+        };
+        try {
+          console.log(p)
+          xhr.open("GET", config.imageSource, true);
+        } catch (e) {
+          // Malformed URL
+          anError(config.uiText.malformedURLError);
         }
+        // xhr.responseType = "blob";
+        xhr.responseType = 'arraybuffer'
+        xhr.setRequestHeader("Accept", "image/*,*/*;q=0.9");
+        xhr.withCredentials = config.crossOrigin === "use-credentials";
+        xhr.send();
       }
+
 
       if (config.draggable) uiContainer.classList.add("pnlm-grab");
       uiContainer.classList.remove("pnlm-grabbing");
@@ -670,7 +604,7 @@ export default (function (window, document, undefined) {
 
         // Load panorama
         panoImage.src = window.URL.createObjectURL(image);
-        console.log('panoImage.src',panoImage.src);
+        console.log('panoImage.src', panoImage.src);
       });
       reader.addEventListener("error", function () {
         console.log(reader.error)
