@@ -1743,7 +1743,7 @@ var pannellum = (function (window, document, undefined$1) {
           }
 
           console.log("p", p, this.response);
-          var img = this.response;
+          var img = this.response.toString();
           parseGPanoXMP(img);
           infoDisplay.load.msg.innerHTML = "";
         };
@@ -1887,7 +1887,7 @@ var pannellum = (function (window, document, undefined$1) {
      */
 
 
-    function parseGPanoXMP(image, server_url) {
+    function parseGPanoXMP(image) {
       var reader = new FileReader();
       reader.addEventListener("loadend", function () {
         console.log('result', reader.result, reader);
@@ -1958,8 +1958,8 @@ var pannellum = (function (window, document, undefined$1) {
         } // Load panorama
 
 
-        console.log('load panorama image', image);
-        panoImage.src = window.URL.createObjectURL(image);
+        console.log('load panorama image', img);
+        panoImage.src = 'data:' + img;
         console.log('panoImage.src', panoImage.src);
       });
       reader.addEventListener("error", function () {
